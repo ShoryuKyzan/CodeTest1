@@ -1,0 +1,277 @@
+
+
+Write a command line program in a language of your choosing that parses the following JSON file from stdin or from command line argument:
+
+https://github.com/jdolan/quetoo/blob/master/src/cgame/default/ui/settings/SystemViewController.json
+
+Your program may assume that the file resides locally on the same filesystem as the program itself, or it may retrieve it via web request if you prefer.
+
+The JSON file represents a view hierarchy in a user interface. You can think of it as a tree of nodes, just like elements in an HTML DOM. Like in HTML, Views have certain attributes that are selectable, ala CSS selectors.
+
+Once parsed, your program should wait for user input on stdin. Each line the user enters on stdin should be treated as a selector, and your program should print the matching views, as JSON, to stdout.
+
+The program must support simple selectors for the following view attributes:
+
+1.     class - The view class name, e.g. "StackView"
+
+2.     classNames - CSS class names, e.g. ".container"
+
+3.     identifier - The view identifier, e.g. "#videoMode"
+
+You can effectively ignore all other attributes in the JSON model for the purpose of selector matching.
+
+Compound selectors (e.g. " View#identifier") are not required, but you’ll certainly impress us if you support them.  Selector chains (e.g. " StackView .container") are not required, but again, you’ll certainly impress us if you support those, too.
+
+There are 26 views in the given JSON file with the class of Input. Ensure the correctness of your program by asserting that it finds all 26 Inputs given the selector "Input".
+
+Good luck!
+
+
+read from stdin
+can load from file or URL directly
+
+view hierarchy...
+things can have attribs that are selectable via CSS selectors
+
+read selector from stdin. line is a selector
+print matching as JSON to stdout
+    I'm guessing I should print the whole JSON blob of that object.
+
+supports:
+    class - element
+    classNames - .className
+    identifier #identifier
+
+BONUS
+compounds not required but can impress... element.className#identifier
+chains of selectors like normal CSS are not required (selector selector selector...)
+
+TEST
+    Input should return 26 elements
+
+
+############# TASK: Identify keywords and what they mean so we can parse this.  keywords file needs to be sort uniq'd. 
+
+
+class: SELECTABLE string
+classNames: SELECTABLE [className...]
+contentView: TRAVERSE {}
+control: TRAVERSE {}
+expectsStringValue:
+identifier: SELECTABLE
+label:
+max:
+min:
+step:
+subviews:
+text:
+title:
+var:
+var:
+
+
+okay... i'm seeing a pattern!
+
+if any property contains an array or object, TRAVERSE it searching for selectables.
+this makes it a little unlike CSS selectors ... because if an object is selected u need to traverse all arrays and objects therein and those could return results.
+
+ok...
+i think i know what to do... lets design the first things firsts
+
+selectable list
+while read line
+    read selector
+        set selector type
+        set selector text
+    parse selector
+    scan for selector
+        def parse(object, results)
+            if object
+                for property in object
+                    if property is selectable
+                        and property type = selector property type
+                        and property name = selected type:
+                            add to results
+                    if property is array
+                        for value in array
+                            parse(object, results)
+                    if property is object
+                        parse(object, results)
+    for result in results
+        print result
+
+how should the search algorithm go...?
+searching for an object of a certain type with a certain name
+
+but pay attention to these!!
+    class: SELECTABLE string
+    classNames: SELECTABLE [className...]
+    identifier: SELECTABLE
+
+now howabout compound ... selector parsing would match two conditions on the object ... the SAME object.
+i'm inclined to go over selectable properties 1st meby? i dunno ...
+howabout this ...
+each object gets conditons = array(conditioncount)
+or we combine with &&
+nah
+
+
+selectable list
+while read line
+    break selector by . and #, build into list
+        condition[0].type = class
+        condition[0].name = name
+        condition[1].type = className
+        condition[1].name = name
+        condition[2].type = identifier
+        condition[2].name = name
+    scan for selector
+        def parse(object, results)
+            if object
+                matched counter = 0
+                for property in object
+                    if property is selectable
+                        if property type in selector properties
+                        if property name = selector properties[selector property type]
+                            matched counter += 1
+                        if property is array
+                            for value in array
+                                parse(object, results)
+                        if property is object
+                            parse(object, results)
+                if matched counter = selector properties.length
+    for result in results
+        print result
+
+        
+now howabout the 3rd one ... where we have multiple selectors...
+i feel like its a filter but you can start the filter at any element on top level ...
+you have a list of selector conditions
+if an object matches one of those then its descendents could be in the results list
+no thats not it...
+
+you parse until you find an object that matches
+    if last condition, add to results, stop parsing
+    you pop that condition off of the stack
+    search descendents with remaining conditions
+        find an object that matches
+            if last condition, add to results, stop parsing
+            you pop that condition off of the stack
+            search descendents with remaining conditions
+                find an object that matches
+                    if last condition, add to results
+                    search descendents with remaining conditions until there are no objects left
+            keep looking for others that match
+        keep looking for others that match
+keep parsing for other objects that match that 1st filter
+
+
+the problem with this is that you have to duplicate the condition list ... or do you ...
+meby you can just do it with indices.
+condition index
+
+ok lets write...
+
+
+selectable list
+
+download file
+https://github.com/jdolan/quetoo/blob/master/src/cgame/default/ui/settings/SystemViewController.json
+
+while read line
+    split selector by space
+    for each selector
+        break selector by . and #, build into list
+            condition[i][0].type = class
+            condition[i][0].name = name
+            condition[i][1].type = className
+            condition[i][1].name = name
+            condition[i][2].type = identifier
+            condition[i][2].name = name
+    scan for selector
+        def parse(object, results)
+            if object is array
+                for value in array
+                    parse(object, conditions, conditionIndex, results)
+            if object is object
+                matched counter = 0
+                for property in object
+                    if property is selectable
+                        if property type in selector properties
+                        if property name = selector properties[selector property type]
+                            matched counter += 1
+                        if property is array or object
+                            skip
+                if matched counter = selector properties.length
+                    condition index +1
+                    if condition index = last index
+                        add object to results
+                    // search descendents for remaining conditions
+                // continue searching for conditions (either with modified set or same set)
+                for property in object
+                    if property is array or object
+                        if property is array
+                            for value in array
+                                parse(object, conditions, conditionIndex, results)
+                        if property is object
+                            parse(object, conditions, conditionIndex, results)
+    for result in results
+        print result
+
+ok that should work...
+we need test conditions and stuff..
+
+
+
+
+i need to work on the parsing ... its borked...
+
+what about split by 2 things at once?
+yeah thats it...
+split('.')
+    .class yields  '', 'class'
+    elem yields 'elem', should add 1, split 0
+    #id yields '#id', should add 1, split 0
+    elem#id.class
+oh i forgot other possibility
+elem#id.class
+oop.
+so they can be in either order.
+hrm.
+i think i'll do this...
+
+argh this is a very hard problem!!
+
+CASES
+.class
+elem
+#id
+elem.class#id
+elem#id
+elem#id.class
+
+split .
+    // finding clazz and id
+    split parts[0] #
+        if not found push ''
+        elem = parts2[0]
+        id = parts2[1]
+// finding classname and id
+split parts[1] #
+    if not found push ''
+    class = parts[0]
+    if(id === ''){
+        id = parts[1]
+    }
+
+    
+ok i got it basically working!
+
+now i need to form tests that make sense
+
+.class
+elem
+#id
+elem.class#id
+elem#id
+elem#id.class

@@ -1,0 +1,92 @@
+ cond identifier string System null
+         cond class string StackView null
+         cond classNames array [ 'container' ] container
+         value [ 'container' ]
+         matchedCounter 1
+                 cond class string StackView null
+                 cond classNames array [ 'columns', 'container' ] container
+                 value [ 'columns', 'container' ]
+                 matchedCounter 1
+                         cond class string StackView null
+                         cond classNames array [ 'column', 'container' ] container
+                         value [ 'column', 'container' ]
+                         matchedCounter 1
+                                 cond class string Box null
+                                             cond class string Input null
+                                                 cond class string VideoModeSelect null
+                                                 cond identifier string videoMode null
+                                             cond class string Input null
+                                                 cond class string CvarCheckbox null
+                                             cond class string Input null
+                                                 cond class string CvarSelect null
+                                                 cond identifier string windowMode null
+                                             cond class string Input null
+                                                 cond class string CvarSelect null
+                                                 cond identifier string verticalSync null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                                 cond class string Box null
+                                             cond class string Input null
+                                                 cond class string CvarSelect null
+                                                 cond identifier string textureMode null
+                                             cond class string Input null
+                                                 cond class string CvarSelect null
+                                                 cond identifier string anisotropy null
+                                             cond class string Input null
+                                                 cond class string CvarSelect null
+                                                 cond identifier string multisample null
+                                             cond class string Input null
+                                                 cond class string CvarSelect null
+                                                 cond identifier string supersample null
+                         cond class string StackView null
+                         cond classNames array [ 'column', 'container' ] container
+                         value [ 'column', 'container' ]
+                         matchedCounter 1
+                                 cond class string Box null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                         cond class string StackView null
+                         cond classNames array [ 'column', 'container' ] container
+                         value [ 'column', 'container' ]
+                         matchedCounter 1
+                                 cond class string Box null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                                             cond class string Input null
+                                                 cond class string CvarSlider null
+                                             cond class string Input null
+                                                 cond class string CvarCheckbox null
+                                 cond class string Box null
+                                             cond class string Input null
+                                                 cond class string CvarSelect null
+                                                 cond identifier string rate null
+                                             cond class string Input null
+                                                 cond class string CvarCheckbox null
+                                             cond class string Input null
+                                                 cond class string CvarCheckbox null
+                                             cond class string Input null
+                                                 cond class string CvarCheckbox null
+                 cond class string StackView null
+                 cond classNames array [ 'accessoryView', 'container' ] container
+                 value [ 'accessoryView', 'container' ]
+                 matchedCounter 1
+                         cond class string Button null
+                         cond identifier string apply null
